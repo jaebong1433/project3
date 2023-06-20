@@ -32,7 +32,7 @@ export const getEmotionImgById = (emotionId) => {
 //월과 일이 10 미만의 수라면 앞에 0을 붙여 두 자리 수로 만듬
 export const getFormattedDate = (targetDate) => {
     let year = targetDate.getFullYear();
-    let month = targetDate.getMonth();
+    let month = targetDate.getMonth() + 1;
     let date = targetDate.getDate();
     if(month < 10){
         month = `0${month}`

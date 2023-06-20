@@ -1,5 +1,5 @@
 import "./Editor.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { emotionList, getFormattedDate } from "../util";
 import Button from "./Button";
 import { useNavigate } from "react-router-dom";
@@ -49,12 +49,12 @@ const Editor = ({initData, onSubmit}) => {
     //감정 이미지를 클릭하면 호출할 이벤트 핸들러를 만듬
     //이 함수는 감정 이미지 선택 섹션에서 클릭한 이미지 번호를 매개변수 emotionId에 저장함
     //그리고 이 번호로 현재 State의 emotionId 값을 업데이트
-    const handleChagneEmotion = (emotionId) => {
-        setState({
+    const handleChagneEmotion = useCallback((emotionId) => {
+        setState((state) => ({
             ...state,
             emotionId,
-        });
-    };
+        }));
+    }, []);
     
     //useEffect에 첫 번째 인수로 전달한 콜백 함수는 initDate 값이 변경될 때마다 실행됨
     useEffect(() => {

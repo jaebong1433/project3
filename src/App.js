@@ -1,18 +1,18 @@
-import './App.css';
-import Home from './pages/Home';
-import New from './pages/New';
-import Edit from './pages/Edit';
-import Diary from './pages/Diary';
-import { Route, Routes } from 'react-router-dom';
-import React, { useReducer, useRef, useEffect, useState } from 'react';
+import React, { useReducer, useRef, useEffect, useState } from "react";
+import { Routes, Route, Link } from "react-router-dom";
+import "./App.css";
+import Home from "./pages/Home";
+import New from "./pages/New";
+import Diary from "./pages/Diary";
+import Edit from "./pages/Edit";
 
 //createContext 메서드를 호출해 일기 State값을 컴포넌트 트리에 공급할 Context를 만듬
 //이때 이 Context를 다른 파일에서 불러올 수 있도록 export로 내보냄 
 export const DiaryStateContext = React.createContext();
-export const DiaryDispacthContext = React.createContext();
+export const DiaryDispatchContext = React.createContext();
 
 function reducer(state, action){
-  switch(action.type){
+  switch (action.type){
     //action.type이 CREATE면 action.data가 일기 State 배열 맨 앞에 추가된 새 일기 데이터가 반환됨
     //그리고 새로 작성한 data가 추가된 일기 State로 업데이트됨 
     case "CREATE": {
@@ -23,8 +23,8 @@ function reducer(state, action){
     //찾으면 action.data의 값을 변경한느 새 일기 데이터를 반환하고 그렇지 않으면 기존 일기 아이템을 그대로 반환함
     //그 결과 id가 action.id인 일기 아이템의 정보만 수정됨
     case "UPDATE": {
-      return state.map((it) => 
-        String(it.id) === String(action.data.id) ? {...action.data} : it
+      return state.map((it) =>
+        String(it.id) === String(action.data.id) ? { ...action.data } : it
       );
     }
     
@@ -47,24 +47,23 @@ function reducer(state, action){
 const mockData = [
   {
     id: "mock1",
-    date: new Date().getTime(),
+    date: new Date().getTime() - 1,
     content: "mock1",
-    emotionId:1,
+    emotionId: 1,
   },
   {
     id: "mock2",
-    date: new Date().getTime(),
+    date: new Date().getTime() - 2,
     content: "mock2",
-    emotionId:2,
+    emotionId: 2,
   },
   {
     id: "mock3",
-    date: new Date().getTime(),
+    date: new Date().getTime() - 3,
     content: "mock3",
-    emotionId:3,
+    emotionId: 3,
   },
-  
-]
+];
 
 
 
@@ -92,8 +91,8 @@ function App() {
     //이때 인수로 전달하는 action 객체의 type에는 생성을 의미하는 CREATE를,
     //date에는 새롭게 생성한 일기 아이템을 객체로 만들어 전달함
     dispatch({
-      type:"CREATE",
-      date: {
+      type: "CREATE",
+      data: {
         id: idRef.current,
         date: new Date(date).getTime(),
         content,
@@ -103,7 +102,7 @@ function App() {
     //idRef의 현잿값을 1늘려 다음 일기를 생성할 때 아이디가 중복되지 않도록 함 
     idRef.current += 1;
   };
-  
+
   const onUpdate = (targetId, date, content, emotionId) => {
     //일기 수정을 위해 일기 State를 업데이트해야 하므로 함수 dispatch를 호출함
     dispatch({
@@ -122,36 +121,34 @@ function App() {
       type: "DELETE",
       targetId,
     });
-  }
+  };
 
-  if(!isDataLoaded){
-    return <div>데이터를 불러오는 중입니다...</div>
-  
-  }else{ //isDataLoaded의 값이 true면 일기 State의 초기화가 완료되었으므로 자식 컴포넌트를 모두 렌더링함
+  if (!isDataLoaded) {
+    return <div>데이터를 불러오는 중입니다</div>;
+    
+  } else { //isDataLoaded의 값이 true면 일기 State의 초기화가 완료되었으므로 자식 컴포넌트를 모두 렌더링함
 
   return (
     //아래의 컴포넌트들을 Props Drilling 없이 useContext를 이용해 일기 State를 꺼내 쓸 수 있음 
-    <DiaryStateContext.Provider 
-      value={{
-        onCreate,
-        onUpdate,
-        onDelete,
-      }}>
-      
-    <div className="App">
-            
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/new' element={<New />} />
-        <Route path='/diary/:id' element={<Diary />} />
-        <Route path='/edit/:id' element={<Edit />} />
-        
-      </Routes>
-      
-    </div>
-    </DiaryStateContext.Provider>
-  );
+    <DiaryStateContext.Provider value={data}>
+        <DiaryDispatchContext.Provider
+          value={{
+            onCreate,
+            onUpdate,
+            onDelete,
+          }}
+        >
+          <div className="App">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/new" element={<New />} />
+              <Route path="/diary/:id" element={<Diary />} />
+              <Route path="/edit/:id" element={<Edit />} />
+            </Routes>
+          </div>
+        </DiaryDispatchContext.Provider>
+      </DiaryStateContext.Provider>
+    );
   }
 }
-
 export default App;
