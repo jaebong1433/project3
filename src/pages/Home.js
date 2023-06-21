@@ -2,7 +2,7 @@ import Button from "../component/Button";
 import Header from "../component/Header";
 import { useState, useContext, useEffect } from "react";
 import { DiaryStateContext } from "../App"
-import { getMonthRangeByDate } from "../util";
+import { getMonthRangeByDate, setPageTitle } from "../util";
 import DiaryList from "../component/DiaryList";
 
 const Home = () => {
@@ -35,6 +35,11 @@ const Home = () => {
             setFilteredData([]);
         }
     }, [data, pivotDate]);
+
+    //useEffect를 한 번 더 호출함 useEffect에서는 Home 컴포넌트를 마운트할 때, 함수 setPageTitle을 호출하고 인수로 페이지 제목을 전달함
+    useEffect(() => {
+        setPageTitle("재봉이의 감정 일기장");
+    },[]);
 
     return (
         <div>

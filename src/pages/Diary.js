@@ -4,6 +4,8 @@ import Button from "../component/Button";
 import Header from "../component/Header";
 import { getFormattedDate } from "../util";
 import Viewer from "../component/Viewer";
+import { useEffect } from "react";
+import { setPageTitle } from "../util";
 
 const Diary = () => {
     //브라우저에서 URL을 입력하면 이 경로에 포함된 URL 파라미터를 객체 형태로 반환함
@@ -25,6 +27,10 @@ const Diary = () => {
         navigate(`/edit/${id}`);
     };
     
+    useEffect(() => {
+        setPageTitle(`${id}번 일기`);
+    },[]);
+
     if (!data) {
         return <div>일기를 불러오고 있습니다...</div>;
     } else {

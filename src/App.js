@@ -16,22 +16,30 @@ function reducer(state, action){
     //action.type이 CREATE면 action.data가 일기 State 배열 맨 앞에 추가된 새 일기 데이터가 반환됨
     //그리고 새로 작성한 data가 추가된 일기 State로 업데이트됨 
     case "CREATE": {
-      return [action.data, ...state];
+      const newState = [action.data, ...state];
+      localStorage.setItem("diary", JSON.stringify(newState));
+      return newState;
     }
 
     //action.type이 UPDATE면 내장 함수 map을 이용해 일기 아이템을 순회하면서 수정할 일기 id(action.data.id)와 일치하는 데이터를 찾음
     //찾으면 action.data의 값을 변경한느 새 일기 데이터를 반환하고 그렇지 않으면 기존 일기 아이템을 그대로 반환함
     //그 결과 id가 action.id인 일기 아이템의 정보만 수정됨
     case "UPDATE": {
-      return state.map((it) =>
+      const newState = state.map((it) => 
         String(it.id) === String(action.data.id) ? { ...action.data } : it
       );
+      localStorage.setItem("diary", JSON.stringify(newState));
+      return newState;
     }
     
     //일기를 삭제할 때는 함수 reducer에서 삭제할 일기 아이템을 제외한 새 일기 데이터 배열을 반환 해야 함
     //따라서 filter메서드를 이용해 삭제할 일기 id와 일치하는 아이템은 빼고 새 일기 데이터 배열을 만들어 반환함
     case "DELETE": {
-      return state.filter((it) => String(it.id) !== String(action.targetId));
+      const newState = state.filter(
+        (it) => String(it.id) !== String(action.targetId)
+      );
+      localStorage.setItem("diary", JSON.stringify(newState));
+      return newState;
     }
 
     //action.data에 저장된 목 데이터로 일기 State를 업데이트 
@@ -44,29 +52,6 @@ function reducer(state, action){
   }
 }
 
-const mockData = [
-  {
-    id: "mock1",
-    date: new Date().getTime() - 1,
-    content: "mock1",
-    emotionId: 1,
-  },
-  {
-    id: "mock2",
-    date: new Date().getTime() - 2,
-    content: "mock2",
-    emotionId: 2,
-  },
-  {
-    id: "mock3",
-    date: new Date().getTime() - 3,
-    content: "mock3",
-    emotionId: 3,
-  },
-];
-
-
-
 //Routes는 여러 Route를 감싸고 현재 URL 경로에 맞게 적절한 Route 컴포넌트를 페이지에 렌더링
 function App() {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -77,12 +62,38 @@ function App() {
   const idRef = useRef(0);
 
   useEffect(() => {
-    dispatch({
-      type: "INIT",
-      data: mockData,
-    });
+    //localStorage에 저장한 일기 데이터를 불러옴 key가 diary인 값을 불러와 변수 rawData에 저장함
+    const rawData = localStorage.getItem("diary");
+
+    //불러온 일기 데이터가 없으면 변수 isDataLoaded를 true로 업데이트하고 콜백 함수를 종료함
+    if(!rawData){
+      setIsDataLoaded(true);
+      return;
+    }
+
+    //일기 데이터가 있으면, JSON.parse를 이용해 객체를 복구함
+    const localData = JSON.parse(rawData);
+
+    //JSON.parse로 복구한 일기 데이터의 길이가 0이면, 변수 isDataLoaded를 true로 변경하고 콜백 함수를 종료함
+    if(localData.length === 0){
+      setIsDataLoaded(true);
+      return;
+    }
+
+    //불러온 일기 데이터를 id를 기준으로 내림차순으로 정렬함
+    localData.sort((a,b) => Number(b.id) - Number(a.id));
+
+    //idRef의 현잿값을 일기 id에서 가장 큰 값에 1 더한 값으로 설정함
+    idRef.current = localData[0].id + 1;
+
+    //함수 dispatch를 호출하고 인수로 전달하는 action 객체의 type은 초기값 설정을 의미하는 INIT을,
+    //data에는 로컬 스토리지에서 불러온 일기 데이터 localData를 전달함
+    dispatch({type: "INIT", data: localData});
+
+    //isDataLoaded를 true로 업데이트함
     setIsDataLoaded(true);
   }, []);
+
   //함수 onCreate는 Editor 컴포넌트에서 사용자가 선택한 날짜 정보, 입력한 일기, 선택한 감정 이미지 번호를 
   //매개변수 date, content, emotionId로 저장함
   const onCreate = (date, content, emotionId) => {
