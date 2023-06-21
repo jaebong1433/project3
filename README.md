@@ -9,6 +9,7 @@ DB : localStorage <br>
 텍스트 에디터 : Visual Studio Code <br>
 JavaScript 런타임 : node.js <br>
 라이브러리 : React Router, lodash, CRA <br>
+클라우드 호스팅 : firebase
 참고 : chat GPT, 도서 <br>
 
 처음 실행 시 'react-scripts'은(는) 내부 또는 외부 명령, 실행할 수 있는 프로그램, 또는 배치 파일이 아닙니다. 오류 발생 <br> 
