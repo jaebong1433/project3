@@ -9,9 +9,14 @@ DB : localStorage <br>
 텍스트 에디터 : Visual Studio Code <br>
 JavaScript 런타임 : node.js <br>
 라이브러리 : React Router, lodash, CRA <br>
-클라우드 호스팅 : firebase
+클라우드 호스팅 : firebase <br>
 참고 : chat GPT, 도서 <br>
 
 처음 실행 시 'react-scripts'은(는) 내부 또는 외부 명령, 실행할 수 있는 프로그램, 또는 배치 파일이 아닙니다. 오류 발생 <br> 
 해결 방법 터미널 창에 npm install global react-scripts 입력 <br>
+
+![image](https://github.com/jaebong1433/project3/assets/125847340/60e25ab8-d4c1-4b89-a4af-b38955058d56)
+![image](https://github.com/jaebong1433/project3/assets/125847340/d5b394b6-5ff1-466c-aaca-654f7b3f5144)
+![image](https://github.com/jaebong1433/project3/assets/125847340/235ae242-0d4e-414b-bed3-73b023792c10)
+
 
